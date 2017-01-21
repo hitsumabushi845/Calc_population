@@ -1,0 +1,155 @@
+{
+  "1s1s": [
+    "1s1s_singlet_S0"
+  ],
+  "1s2p": [
+    "1s2p_singlet_P1",
+    "1s2p_triplet_P2",
+    "1s2p_triplet_P1",
+    "1s2p_triplet_P0"
+  ],
+  "1s2s": [
+    "1s2s_triplet_S1",
+    "1s2s_singlet_S0"
+  ],
+  "1s3d": [
+    "1s3d_singlet_D2",
+    "1s3d_triplet_D3",
+    "1s3d_triplet_D2",
+    "1s3d_triplet_D1"
+  ],
+  "1s3p": [
+    "1s3p_triplet_P1",
+    "1s3p_triplet_P0",
+    "1s3p_triplet_P2",
+    "1s3p_singlet_P1"
+  ],
+  "1s3s": [
+    "1s3s_triplet_S1",
+    "1s3s_singlet_S0"
+  ],
+  "1s4d": [
+    "1s4d_singlet_D2",
+    "1s4d_triplet_D1",
+    "1s4d_triplet_D3",
+    "1s4d_triplet_D2"
+  ],
+  "1s4f": [
+    "1s4f_triplet_F3",
+    "1s4f_singlet_F3",
+    "1s4f_triplet_F2",
+    "1s4f_triplet_F4"
+  ],
+  "1s4p": [
+    "1s4p_singlet_P1",
+    "1s4p_triplet_P2",
+    "1s4p_triplet_P0",
+    "1s4p_triplet_P1"
+  ],
+  "1s4s": [
+    "1s4s_singlet_S0",
+    "1s4s_triplet_S1"
+  ],
+  "1s5d": [
+    "1s5d_triplet_D1",
+    "1s5d_singlet_D2",
+    "1s5d_triplet_D2",
+    "1s5d_triplet_D3"
+  ],
+  "1s5f": [
+    "1s5f_triplet_F4",
+    "1s5f_triplet_F2",
+    "1s5f_triplet_F3",
+    "1s5f_singlet_F3"
+  ],
+  "1s5g": [
+    "1s5g_singlet_G4",
+    "1s5g_triplet_G3",
+    "1s5g_triplet_G5",
+    "1s5g_triplet_G4"
+  ],
+  "1s5p": [
+    "1s5p_triplet_P2",
+    "1s5p_triplet_P0",
+    "1s5p_triplet_P1",
+    "1s5p_singlet_P1"
+  ],
+  "1s5s": [
+    "1s5s_singlet_S0",
+    "1s5s_triplet_S1"
+  ],
+  "1s6d": [
+    "1s6d_triplet_D1",
+    "1s6d_singlet_D2",
+    "1s6d_triplet_D2",
+    "1s6d_triplet_D3"
+  ],
+  "1s6f": [
+    "1s6f_singlet_F3",
+    "1s6f_triplet_F2",
+    "1s6f_triplet_F4",
+    "1s6f_triplet_F3"
+  ],
+  "1s6g": [
+    "1s6g_triplet_G4",
+    "1s6g_triplet_G3",
+    "1s6g_triplet_G5",
+    "1s6g_singlet_G4"
+  ],
+  "1s6h": [
+    "1s6h_singlet_H5",
+    "1s6h_triplet_H6",
+    "1s6h_triplet_H4",
+    "1s6h_triplet_H5"
+  ],
+  "1s6p": [
+    "1s6p_singlet_P1",
+    "1s6p_triplet_P2",
+    "1s6p_triplet_P0",
+    "1s6p_triplet_P1"
+  ],
+  "1s6s": [
+    "1s6s_singlet_S0",
+    "1s6s_triplet_S1"
+  ],
+  "1s7d": [
+    "1s7d_triplet_D2",
+    "1s7d_triplet_D1",
+    "1s7d_singlet_D2",
+    "1s7d_triplet_D3"
+  ],
+  "1s7f": [
+    "1s7f_triplet_F2",
+    "1s7f_singlet_F3",
+    "1s7f_triplet_F4",
+    "1s7f_triplet_F3"
+  ],
+  "1s7g": [
+    "1s7g_triplet_G5",
+    "1s7g_triplet_G4",
+    "1s7g_singlet_G4",
+    "1s7g_triplet_G3"
+  ],
+  "1s7h": [
+    "1s7h_triplet_H5",
+    "1s7h_triplet_H4",
+    "1s7h_triplet_H6",
+    "1s7h_singlet_H5"
+  ],
+  "1s7i": [
+    "1s7i_triplet_I5",
+    "1s7i_singlet_I6",
+    "1s7i_triplet_I6",
+    "1s7i_triplet_I7"
+  ],
+  "1s7p": [
+    "1s7p_singlet_P1",
+    "1s7p_triplet_P1",
+    "1s7p_triplet_P2",
+    "1s7p_triplet_P0"
+  ],
+  "1s7s": [
+    "1s7s_triplet_S1",
+    "1s7s_singlet_S0"
+  ]
+}
