@@ -47,14 +47,18 @@ def readorbitsfile(iontype):
                 各微細構造準位を順に格納したtxtファイル．listで読み込まれる．
     '''
 
-    orbitfile = open('./{0}orbits.json'.format(iontype))
-    orbitdict = json.load(orbitfile)
-    orbitfile = open('./electron_configuration_{0}.json'.format(iontype))
-    confdict  = json.load(orbitfile) 
-    orbitfile = open('./electron_configuration_{0}.txt'.format(iontype))
-    conflist  = [i.rstrip('\n') for i in orbitfile.readlines()]
-    orbitfile = open('./orbits_{0}like.txt'.format(iontype))
-    orbitlist = [i.rstrip('\n') for i in orbitfile.readlines()]
+    try:
+        orbitfile = open('./{0}orbits.json'.format(iontype))
+        orbitdict = json.load(orbitfile)
+        orbitfile = open('./electron_configuration_{0}.json'.format(iontype))
+        confdict  = json.load(orbitfile) 
+        orbitfile = open('./electron_configuration_{0}.txt'.format(iontype))
+        conflist  = [i.rstrip('\n') for i in orbitfile.readlines()]
+        orbitfile = open('./orbits_{0}like.txt'.format(iontype))
+        orbitlist = [i.rstrip('\n') for i in orbitfile.readlines()]
+    except:
+        print('No such file or directory.')
+        sys.exit(1)
 
     return (orbitdict, confdict, conflist, orbitlist)
 

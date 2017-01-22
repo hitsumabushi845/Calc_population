@@ -10,6 +10,7 @@ def plot_spectrum_from_population():
 
     Hlike = ['O8+','N7+','C6+']
     Helike = ['O7+','N6+','C5+']
+    Lilike = ['O6+','N5+','C4+']
 
     print('スペクトルをプロットするデータファイルを選んでください．')
     datafilename = selectFile('./datafiles')
@@ -24,6 +25,10 @@ def plot_spectrum_from_population():
         ACfile = open('./ACtoPlotSpectrum/ChiantiAC_{0}_Helike.json'.format(Collision_system[0]))
         orbitfile = open('./orbits_Helike.txt')
         Energyfile = open('./EnergyLevels/EnergyLevel_{0}_Helike.json'.format(Collision_system[0]))
+    elif Collision_system[:3] in Lilike:
+        ACfile = open('./ACtoPlotSpectrum/ChiantiAC_{0}_Lilike.json'.format(Collision_system[0]))
+        orbitfile = open('./orbits_Lilike.txt')
+        Energyfile = open('./EnergyLevels/EnergyLevel_{0}_Lilike.json'.format(Collision_system[0]))
     else:
         print('undefined ion type.')
         sys.exit()
