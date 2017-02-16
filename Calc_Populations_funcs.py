@@ -1,9 +1,11 @@
 import numpy as np
-import os,sys
+import os
+import sys
 import math
 import json
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ptick
+
 
 def rate_eqs(t, Popfuncs, v, Total_Cross_Section, Particle_number, Cross_Sections_dict, A_coefficients_dict, orbitlist):
     '''
@@ -13,7 +15,7 @@ def rate_eqs(t, Popfuncs, v, Total_Cross_Section, Particle_number, Cross_Section
     dfdt = [0.0] * len(Popfuncs)
 
     dfdt[0] = -Total_Cross_Section * v * Particle_number * Popfuncs[0]
-    for df in range(1,len(dfdt),1):
+    for df in range(1, len(dfdt), 1):
         nowOrbit = orbitlist[df-1]
         dfdt[df] = Cross_Sections_dict[nowOrbit]*v*Particle_number*Popfuncs[0]
         if nowOrbit in A_coefficients_dict:
@@ -22,6 +24,7 @@ def rate_eqs(t, Popfuncs, v, Total_Cross_Section, Particle_number, Cross_Section
                 dfdt[orbitlist.index(finalstate)+1] += (AC*Popfuncs[orbitlist.index(nowOrbit)+1])
 
     return dfdt
+
 
 def readorbitsfile(iontype):
     '''
@@ -39,7 +42,7 @@ def readorbitsfile(iontype):
 
             electron_configuration_{iontype}.json:
                 各電子配置において縮退する微細構造準位を格納したjsonファイル．2次元辞書で読み込まれる．
-            
+
             electron_configuration_{iontype}.txt:
                 各電子配置をnlの順に格納したtxtファイル．listで読み込まれる．
 
@@ -51,7 +54,7 @@ def readorbitsfile(iontype):
         orbitfile = open('./{0}orbits.json'.format(iontype))
         orbitdict = json.load(orbitfile)
         orbitfile = open('./electron_configuration_{0}.json'.format(iontype))
-        confdict  = json.load(orbitfile) 
+        confdict  = json.load(orbitfile)
         orbitfile = open('./electron_configuration_{0}.txt'.format(iontype))
         conflist  = [i.rstrip('\n') for i in orbitfile.readlines()]
         orbitfile = open('./orbits_{0}like.txt'.format(iontype))
@@ -61,6 +64,7 @@ def readorbitsfile(iontype):
         sys.exit(1)
 
     return (orbitdict, confdict, conflist, orbitlist)
+
 
 def selectFile(directory):
     '''
@@ -81,6 +85,7 @@ def selectFile(directory):
 
     return Filepath
 
+
 def make2Ddict(names):
     '''
         2次元辞書を作成する関数．
@@ -94,9 +99,10 @@ def make2Ddict(names):
             if x in dict_2d:
                 dict_2d[x][y] = 0.0
             else:
-                dict_2d[x] = {y:0.0}
+                dict_2d[x] = {y: 0.0}
 
     return dict_2d
+
 
 def convert_energy(col_Energy_kVu):
     '''
@@ -105,8 +111,9 @@ def convert_energy(col_Energy_kVu):
     '''
 
     col_Energy_cms = math.sqrt(col_Energy_kVu*10**10*9.64854)*10**2
-    
+
     return col_Energy_cms
+
 
 def convert_pressure(pressure=1.0e+03, temperature=300):
     '''
@@ -115,68 +122,103 @@ def convert_pressure(pressure=1.0e+03, temperature=300):
     pressure_per_cmsquared = pressure/(1.38e-23*temperature)
     return pressure_per_cmsquared
 
-def plot_populations(xaxiss, populations, orbits):
-    
-    if len(xaxiss) != 1:
-        axisflag = True
-        while axisflag:
-            selectXaxis = input('横軸を選んでください(time(t) or position(x))\n> ')
-            if selectXaxis == 't' or selectXaxis == 'time':
-                xaxisarray = xaxiss[0]
-                axisflag = False
-            elif selectXaxis == 'x' or selectXaxis == 'position':
-                xaxisarray = xaxiss[1]
-                axisflag = False
-            else:
-                print('正しい値を入力してください．')
-    else:
-        xaxisarray = xaxiss[0]
-        selectXaxis = 't'
 
-    isPlotBeforeCollision = input('衝突前のイオンのポピュレーションをプロットしますか?(y/n)\n> ')
+def plot_populations(xaxiss, populations, iontype):
+    '''
+        ポピュレーションのグラフをプロットする．
+        横軸は時間と位置の2つから選ぶことができる．
+    '''
 
-    fig = plt.figure(figsize=(16,9))
-    popfig = fig.add_subplot(1,1,1)
-    if isPlotBeforeCollision == 'Y' or isPlotBeforeCollision == 'y':
-        popfig.plot(xaxisarray[::100], populations[::100,0], label='O7+')
+    fig = PopGraph(iontype)
 
-    # どの軌道の曲線をプロットするか選べるようにする？
+    fig.plot(xaxiss, populations)
 
-    for i in np.arange(1,len(populations[0])):
-        #popfig.plot(xaxisarray[::100], populations[::100,i], label='{0}'.format(orbits[i-1]), linestyle='', marker='.', markersize=2)
-        #popfig.plot(xaxisarray[:], populations[:,i], label='{0}'.format(orbits[i-1]), linestyle='',marker='.',markersize=2)
-        popfig.plot(xaxisarray[::100], populations[::100,i], label='{0}'.format(orbits[i-1]), linestyle='-')
+    fig.setGraph()
 
-    if selectXaxis == 'time' or selectXaxis == 't':
-        popfig.set_xlabel('Time[s]', fontsize=25)
-    else:
-        popfig.set_xlabel('Position[cm]', fontsize=25)
-    
-    popfig.set_ylabel('Population', fontsize=25)
-    for tick in popfig.xaxis.get_major_ticks():
-        tick.label.set_fontsize(20)
-    for tick in popfig.yaxis.get_major_ticks():
-        tick.label.set_fontsize(20)
-    popfig.ticklabel_format(style='sci',axis='y',scilimits=(0,0))
-    popfig.ticklabel_format(style='sci',axis='x',scilimits=(0,0))
-    popfig.xaxis.offsetText.set_fontsize(15)
-    popfig.yaxis.offsetText.set_fontsize(15)
-    popfig.yaxis.set_major_formatter(ptick.ScalarFormatter(useMathText=True))
-    popfig.xaxis.set_major_formatter(ptick.ScalarFormatter(useMathText=True))
+    fig.show()
 
-    popfig.legend(loc='best')
-    plt.tight_layout()
-    plt.show()
+    return fig.popfig, fig.selectXaxis
 
-    return fig, selectXaxis
+
+class PopGraph():
+    def __init__(self, iontype):
+        self.popfig = plt.figure(figsize=(16, 9))
+        self.popfig = self.popfig.add_subplot(1, 1, 1)
+        orbitfile = open('./orbits_{0}like.txt'.format(iontype))
+        self.orbits = [i.rstrip('\n') for i in orbitfile.readlines()]
+        self.orbits.insert(0, 'Primary Ion')
+        self.selectXaxis = 't'
+
+    def plot(self, xaxiss, populations):
+
+        if len(xaxiss) == 2:
+            axisflag = True
+            while axisflag:
+                self.selectXaxis = input('横軸を選んでください(time(t) or position(x))\n> ')
+                if self.selectXaxis == 't' or self.selectXaxis == 'time':
+                    xaxisarray = xaxiss[0]
+                    axisflag = False
+                elif self.selectXaxis == 'x' or self.selectXaxis == 'position':
+                    xaxisarray = xaxiss[1]
+                    axisflag = False
+                else:
+                    print('正しい値を入力してください．')
+        else:
+            xaxisarray = xaxiss
+            self.selectXaxis = 't'
+
+        isPlotBeforeCollision = input('衝突前のイオンのポピュレーションをプロットしますか?(y/n)\n> ')
+
+        if isPlotBeforeCollision == 'Y' or isPlotBeforeCollision == 'y':
+            self.popfig.plot(xaxisarray[::100], populations[::100, 0], label=orbits[0])
+
+        for i in np.arange(1, len(populations[0])):
+            self.popfig.plot(xaxisarray[::100], populations[::100, i], label='{0}'.format(self.orbits[i]), linestyle='-')
+
+    def selectionPlot(self, xaxis, populations):
+        for i, orbit in enumerate(self.orbits[:len(populations[1:])]):
+            print('[{0}] {1}'.format(i, orbit))
+        # 複数選択された準位の曲線を同時にプロットできるようにしている．whitespace区切りで準位の入力ができる
+        orbitnumbers = list(map(int, input().split()))
+        for orbitnumber in orbitnumbers:
+            self.popfig.plot(xaxis, populations[:, orbitnumber], label=self.orbits[orbitnumber], linestyle='-', linewidth=4)
+
+    def setGraph(self):
+        if self.selectXaxis == 'time' or self.selectXaxis == 't':
+            self.popfig.set_xlabel('Time[s]', fontsize=25)
+        else:
+            self.popfig.set_xlabel('Position[cm]', fontsize=25)
+
+        for tick in self.popfig.xaxis.get_major_ticks():
+            tick.label.set_fontsize(20)
+        for tick in self.popfig.yaxis.get_major_ticks():
+            tick.label.set_fontsize(20)
+        self.popfig.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+        self.popfig.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
+        self.popfig.xaxis.offsetText.set_fontsize(15)
+        self.popfig.yaxis.offsetText.set_fontsize(15)
+        scale_format = ptick.ScalarFormatter(useMathText=True)
+        self.popfig.yaxis.set_major_formatter(scale_format)
+        self.popfig.xaxis.set_major_formatter(scale_format)
+
+        self.popfig.legend(loc='best')
+        plt.tight_layout()
+
+    def show(self):
+        plt.show()
+
 
 def figoutput(default_output_filename, fig):
+    '''
+        グラフを画像で保存する．
+    '''
 
-        figname = str(input('グラフのファイル名を入力してください．(default={0}_Population.pdf)'.format(default_output_filename)))
-        if figname:
-            plt.savefig('graphs/{0}.pdf'.format(figname),bbox_inches='tight',pad_inches=0.0)
-        else:
-            plt.savefig('graphs/{0}_Population.pdf'.format(default_output_filename),bbox_inches='tight',pad_inches=0.0)
+    figname = str(input('グラフのファイル名を入力してください．(default={0}_Population.pdf)'.format(default_output_filename)))
+    if figname:
+        plt.savefig('graphs/{0}.pdf'.format(figname), bbox_inches='tight', pad_inches=0.0)
+    else:
+        plt.savefig('graphs/{0}_Population.pdf'.format(default_output_filename), bbox_inches='tight', pad_inches=0.0)
+
 
 def outputjson(parameter_dic, output_filename='lastparameter.json'):
     '''
@@ -184,6 +226,7 @@ def outputjson(parameter_dic, output_filename='lastparameter.json'):
     '''
     output_file = open(output_filename, 'w')
     json.dump(parameter_dic, output_file)
+
 
 def inputjson(input_filename='lastparameters.json'):
     '''
