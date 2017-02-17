@@ -29,7 +29,7 @@ def plotfromdatafile():
         iontype = 'Li'
     
     # 取得されたイオン種から準位名(グラフの凡例に使用)を取得
-    orbitfile = open('./orbits_{0}like.txt'.format(iontype))
+    orbitfile = open('./AtomicOrbitDatasets/orbits_{0}like.txt'.format(iontype))
     orbits = [i.rstrip('\n') for i in orbitfile.readlines()]
 
     # 選択されたデータファイルを読み込む

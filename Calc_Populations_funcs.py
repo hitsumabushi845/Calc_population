@@ -51,13 +51,13 @@ def readorbitsfile(iontype):
     '''
 
     try:
-        orbitfile = open('./{0}orbits.json'.format(iontype))
+        orbitfile = open('./AtomicOrbitDatasets/{0}orbits.json'.format(iontype))
         orbitdict = json.load(orbitfile)
-        orbitfile = open('./electron_configuration_{0}.json'.format(iontype))
+        orbitfile = open('./AtomicOrbitDatasets/electron_configuration_{0}.json'.format(iontype))
         confdict  = json.load(orbitfile)
-        orbitfile = open('./electron_configuration_{0}.txt'.format(iontype))
+        orbitfile = open('./AtomicOrbitDatasets/electron_configuration_{0}.txt'.format(iontype))
         conflist  = [i.rstrip('\n') for i in orbitfile.readlines()]
-        orbitfile = open('./orbits_{0}like.txt'.format(iontype))
+        orbitfile = open('./AtomicOrbitDatasets/orbits_{0}like.txt'.format(iontype))
         orbitlist = [i.rstrip('\n') for i in orbitfile.readlines()]
     except:
         print('No such file or directory.')
@@ -144,7 +144,7 @@ class PopGraph():
     def __init__(self, iontype):
         self.popfig = plt.figure(figsize=(16, 9))
         self.popfig = self.popfig.add_subplot(1, 1, 1)
-        orbitfile = open('./orbits_{0}like.txt'.format(iontype))
+        orbitfile = open('./AtomicOrbitDatasets/orbits_{0}like.txt'.format(iontype))
         self.orbits = [i.rstrip('\n') for i in orbitfile.readlines()]
         self.orbits.insert(0, 'Primary Ion')
         self.selectXaxis = 't'
