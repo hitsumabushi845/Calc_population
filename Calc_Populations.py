@@ -73,7 +73,7 @@ def main():
             else:
                 Cross_Sections_dict[orbit] = 0.0
 
-    print(len(Cross_Sections_dict))
+    # print(len(Cross_Sections_dict))
 
     # イオンに対応するA係数ファイルを開く
     try:
@@ -103,7 +103,7 @@ def main():
 
     # 微分方程式ソルバの設定: 求解アルゴリズム，初期値，方程式のパラメータの指定
     # r = ode(rate_eqs).set_integrator('vode',method='bdf')
-    print('Collision_Speed = {0}, \nTotal_Cross_Section = {1}, \nHe = {2}, \nCross_Sections_dict = {3}, \nACdict = {4}, \norbitlist = {5}'.format(Collision_Speed, Total_Cross_Section, He, Cross_Sections_dict, ACdict, orbitlist))
+    # print('Collision_Speed = {0}, \nTotal_Cross_Section = {1}, \nHe = {2}, \nCross_Sections_dict = {3}, \nACdict = {4}, \norbitlist = {5}'.format(Collision_Speed, Total_Cross_Section, He, Cross_Sections_dict, ACdict, orbitlist))
     r = ode(rate_eqs).set_integrator('vode', method='bdf')
     r.set_initial_value(f0, t0).set_f_params(Collision_Speed, Total_Cross_Section, He, Cross_Sections_dict, ACdict, orbitlist)
 

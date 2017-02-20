@@ -19,9 +19,9 @@ def rate_eqs(t, Popfuncs, v, Total_Cross_Section, Particle_number, Cross_Section
         nowOrbit = orbitlist[df-1]
         dfdt[df] = Cross_Sections_dict[nowOrbit]*v*Particle_number*Popfuncs[0]
         if nowOrbit in A_coefficients_dict:
+            dfdt[df] -= sum(A_coefficients_dict[nowOrbit].values())*Popfuncs[df]
             for finalstate, AC in A_coefficients_dict[nowOrbit].items():
-                dfdt[df] -= (AC*Popfuncs[orbitlist.index(nowOrbit)+1])
-                dfdt[orbitlist.index(finalstate)+1] += (AC*Popfuncs[orbitlist.index(nowOrbit)+1])
+                dfdt[orbitlist.index(finalstate)+1] += (AC*Popfuncs[df])
 
     return dfdt
 
