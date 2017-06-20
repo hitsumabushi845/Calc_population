@@ -5,17 +5,17 @@
   
   現在， C, N, O の裸イオン， H-like イオン，He-like イオンの衝突に対応しています．  
 
-  ここに上がっているファイル群だけでは正常に計算できません．Web 上にアップロードすることが推奨されないデータセットがあるのが原因です．
+  ここに上がっているファイル群だけでは正常に計算できません．Web 上にアップロードすることが推奨されないデータセット(personal なデータ)があるのが原因です．
   
 ## 動作確認環境
-  - macOS Sierra v10.12.2
+  - macOS Sierra v10.12.5
   - Python 3.5.1 (Anaconda 4.0.0)
   - matplotlib の backend は Qt4Agg を使っています．
 
 ## Features
 
-- CHIANTI Atomic Database のデータセットを用いた計算が可能
-- ほとんどのデータが JSON であり可読性が高い
+- CHIANTI Atomic Database のデータセットを用いた計算
+- ほとんどのデータが JSON であり可読性・拡張性が高い
 
 ## Requirement
 
