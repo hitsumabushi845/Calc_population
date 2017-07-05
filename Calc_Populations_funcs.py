@@ -201,7 +201,9 @@ class PopGraph():
         self.popfig.yaxis.set_major_formatter(scale_format)
         self.popfig.xaxis.set_major_formatter(scale_format)
 
-        self.popfig.legend(loc='best')
+        isshowlegend = input('凡例(legend)を表示しますか?[y|n] > ')
+        if isshowlegend == 'y' or 'Y':
+            self.popfig.legend(loc='best')
         plt.tight_layout()
 
     def show(self):
@@ -236,3 +238,13 @@ def inputjson(input_filename='lastparameters.json'):
     param_dic = json.load(f)
 
     return param_dic
+
+def print_varsize():
+    import types
+    print('{}{: >15}{}{: >10}{}'.format('|','Variable Name', '|','  Size','|'))
+    print('-----------------------------')
+    for k, v in globals().items():
+        if hasattr(v, 'size') and not k.startswith('_') and not isinstance(v, types.ModuleType):
+            print('{}{: >15}{}{: >10}{}'.format('|',k,'|',str(v.size),'|'))
+        elif hasattr(v, '__len__') and not k.startswith('_') and not isinstance(v.types.ModuleType):
+            print('{}{: >15}{}{: >10}{}'.format('|', k, '|', str(len(v)), '|'))
