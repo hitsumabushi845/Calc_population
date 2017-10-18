@@ -6,6 +6,11 @@
   現在， C, N, O の裸イオン， H-like イオン，He-like イオンの衝突に対応しています．  
 
   ここに上がっているファイル群だけでは正常に計算できません．Web 上にアップロードすることが推奨されないデータセット(personal なデータ)があるのが原因です．
+
+
+## プログラムについて
+### Calc_populations.py
+  <img src="https://latex.codecogs.com/gif.latex?\frac{\textrm{d}[{\rm&space;X}^{(q-1)&plus;}(\mathcal{S})]}{\textrm{d}t}=\sigma_{\mathcal{S}}\cdot&space;v&space;[{\rm&space;X}^{q&plus;}][{\rm&space;Y}]&space;&plus;\sum_{\mathcal{S}'}\left\{A_{\mathcal{S}',&space;\mathcal{S}}[{\rm&space;X}^{(q-1)&plus;}(\mathcal{S}')]\right\}&space;-\left\{\sum_{\mathcal{S}''}A_{\mathcal{S},&space;\mathcal{S}''}\right\}[{\rm&space;X}^{(q-1)&plus;}(\mathcal{S})]" />
   
 ## 動作確認環境
   - macOS Sierra v10.12.5
