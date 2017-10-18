@@ -11,8 +11,14 @@
 ## プログラムについて
 ### Calc_populations.py
   衝突前のイオンに関する方程式
+
+
   <img src="https://latex.codecogs.com/gif.latex?\frac{\textrm{d}[{\rm&space;X}^{q&plus;}]}{\textrm{d}t}=-\sigma_{\mathrm{total}}\cdot&space;v&space;[{\rm&space;X}^{q&plus;}][{\rm&space;Y}]" />
+
+
   衝突後のイオンに関する方程式
+
+
   <img src="https://latex.codecogs.com/gif.latex?\frac{\textrm{d}[{\rm&space;X}^{(q-1)&plus;}(\mathcal{S})]}{\textrm{d}t}=\sigma_{\mathcal{S}}\cdot&space;v&space;[{\rm&space;X}^{q&plus;}][{\rm&space;Y}]&space;&plus;\sum_{\mathcal{S}'}\left\{A_{\mathcal{S}',&space;\mathcal{S}}[{\rm&space;X}^{(q-1)&plus;}(\mathcal{S}')]\right\}&space;-\left\{\sum_{\mathcal{S}''}A_{\mathcal{S},&space;\mathcal{S}''}\right\}[{\rm&space;X}^{(q-1)&plus;}(\mathcal{S})]" />
   
   からなる連立微分方程式を解きます
