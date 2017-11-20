@@ -33,13 +33,14 @@
   Calc_populations.py で生成された解データファイルから，発光スペクトルをプロットします
 
 ### gaussian_convolution.py
-  plot_spectrum_from_population.py で生成されたスペクトルをそれぞれガウス関数で重ね合わせます
+  plot_spectrum_from_population.py で生成されたスペクトルをそれぞれガウス関数で重ね合わせます．
+  検出器で得られたスペクトルと比較することを想定しているので，半値幅を入力できるようになっています．
 
 
 ## 動作確認環境
   - macOS Sierra v10.12.5
   - Python 3.5.1 (Anaconda 4.0.0)
-  - matplotlib の backend は Qt4Agg を使っています．
+  - matplotlib の backend は Qt5Agg を使っています．
 
 ## Features
 
