@@ -36,6 +36,9 @@
   plot_spectrum_from_population.py で生成されたスペクトルをそれぞれガウス関数で重ね合わせます．
   検出器で得られたスペクトルと比較することを想定しているので，半値幅を入力できるようになっています．
 
+### makeArbitraryProductionRatioDatafile.py
+  He-like イオンにおける singlet, triplet の生成比を自由に設定するためのプログラムです．
+  一律で設定，もしくは各 nl ごとに生成比を設定することができます．
 
 ## 動作確認環境
   - macOS Sierra v10.12.5
