@@ -1,24 +1,18 @@
 # Calc_population
 励起準位占有数分布計算プログラムです．
 ## 概要
-  太陽風多価イオン衝突における励起準位占有数分布計算プログラムです．
-  
-  現在， C, N, O の裸イオン， H-like イオン，He-like イオンの衝突に対応しています．  
-
+  太陽風多価イオン衝突における励起準位占有数分布計算プログラムです．    
+  現在， C, N, O の裸イオン， H-like イオン，He-like イオンの衝突に対応しています．    
   ここに上がっているファイル群だけでは正常に計算できません．Web 上にアップロードすることが推奨されないデータセット(personal なデータ)があるのが原因です．
 
 
 ## プログラムについて
 ### Calc_populations.py
-  衝突前のイオンに関する方程式
-
-
+  衝突前のイオンに関する方程式  
   <img src="https://latex.codecogs.com/gif.latex?\frac{\textrm{d}[{\rm&space;X}^{q&plus;}]}{\textrm{d}t}=-\sigma_{\mathrm{total}}\cdot&space;v&space;[{\rm&space;X}^{q&plus;}][{\rm&space;Y}]" />
 
 
-  衝突後のイオンに関する方程式
-
-
+  衝突後のイオンに関する方程式  
   <img src="https://latex.codecogs.com/gif.latex?\frac{\textrm{d}[{\rm&space;X}^{(q-1)&plus;}(\mathcal{S})]}{\textrm{d}t}=\sigma_{\mathcal{S}}\cdot&space;v&space;[{\rm&space;X}^{q&plus;}][{\rm&space;Y}]&space;&plus;\sum_{\mathcal{S}'}\left\{A_{\mathcal{S}',&space;\mathcal{S}}[{\rm&space;X}^{(q-1)&plus;}(\mathcal{S}')]\right\}&space;-\left\{\sum_{\mathcal{S}''}A_{\mathcal{S},&space;\mathcal{S}''}\right\}[{\rm&space;X}^{(q-1)&plus;}(\mathcal{S})]" />
   
   からなる連立微分方程式を解きます
@@ -33,11 +27,11 @@
   Calc_populations.py で生成された解データファイルから，発光スペクトルをプロットします
 
 ### gaussian_convolution.py
-  plot_spectrum_from_population.py で生成されたスペクトルをそれぞれガウス関数で重ね合わせます．
+  plot_spectrum_from_population.py で生成されたスペクトルをそれぞれガウス関数で重ね合わせます．  
   検出器で得られたスペクトルと比較することを想定しているので，半値幅を入力できるようになっています．
 
 ### makeArbitraryProductionRatioDatafile.py
-  He-like イオンにおける singlet, triplet の生成比を自由に設定するためのプログラムです．
+  He-like イオンにおける singlet, triplet の生成比を自由に設定するためのプログラムです．  
   一律で設定，もしくは各 nl ごとに生成比を設定することができます．
 
 ## 動作確認環境
