@@ -1,7 +1,8 @@
 import numpy as np
+import os
 import sys
 import json
-from Calc_Populations_funcs_ECCSjson import *
+from Calc_Populations_funcs import *
 
 def create_coefficient_matrix(numberOfStates, v, Total_Cross_Section, Particle_number, Cross_Sections_dict, A_coefficients_dict, orbitlist):
     '''
@@ -43,7 +44,7 @@ Stiff な微分方程式ではGear法や後退微分法(BDF)を求解アルゴ�
     orbitdict, confdict, conflist, orbitlist = readorbitsfile(ECCSdict['iontype'])
 
     Collision_system = ECCSFilePath.split('/')
-    Collision_system = Collision_system[-1].rstrip('.json')
+    Collision_system = os.path.splitext(Collision_system[-1])[0]
     # 電子捕獲断面積ファイルには複数の衝突エネルギーにおける電子捕獲断面積が格納されているので，選択する.
     Col_energies = [float(e) for e in list(ECCSdict.keys()) if e != 'iontype']
     Col_energies.sort()

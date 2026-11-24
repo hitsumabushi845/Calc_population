@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ptick
 import pandas as pd
-from Calc_Populations_funcs_ECCSjson import selectFile
+from Calc_Populations_funcs import selectFile
 
 def gaussian_convolution():
     print('スペクトルのデータファイルを選んでください．')
@@ -29,10 +29,7 @@ def gaussian_convolution():
     gaussianfigure.set_ylabel('Intensity / arb. units', fontsize=25)
 
     
-    for tick in gaussianfigure.xaxis.get_major_ticks():
-        tick.label.set_fontsize(20)
-    for tick in gaussianfigure.yaxis.get_major_ticks():
-        tick.label.set_fontsize(20)
+    gaussianfigure.tick_params(axis='both', labelsize=20)
     gaussianfigure.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
     gaussianfigure.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
     gaussianfigure.xaxis.offsetText.set_fontsize(15)

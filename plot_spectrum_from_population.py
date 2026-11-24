@@ -4,7 +4,7 @@ import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from Calc_Populations_funcs_ECCSjson import *
+from Calc_Populations_funcs import *
 
 
 def plot_spectrum_from_population():
@@ -100,11 +100,7 @@ def plot_spectrum_from_population():
     elif xaxisoption == 'w':
         esp.set_xlabel('Wavelength[nm]', fontsize=30)
     esp.set_ylabel('Intensity', fontsize=27)
-    esp.tick_params(labelleft='off')
-    for tick in esp.xaxis.get_major_ticks():
-        tick.label.set_fontsize(23)
-    for tick in esp.yaxis.get_major_ticks():
-        tick.label.set_fontsize(23)
+    esp.tick_params(axis='both', labelsize=23, labelleft=False)
     plt.tight_layout()
     plt.show()
 

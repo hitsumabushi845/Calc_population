@@ -1,5 +1,5 @@
 import numpy as np
-from Calc_Populations_funcs_ECCSjson import *
+from Calc_Populations_funcs import *
 import matplotlib.pyplot as plt
 import pandas as pd
 

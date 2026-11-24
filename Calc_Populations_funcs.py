@@ -17,7 +17,8 @@ def rate_eqs(t, Popfuncs, v, Total_Cross_Section, Particle_number, Cross_Section
     dfdt[0] = -Total_Cross_Section * v * Particle_number * Popfuncs[0]
     for df in range(1, len(dfdt), 1):
         nowOrbit = orbitlist[df-1]
-        dfdt[df] = Cross_Sections_dict[nowOrbit]*v*Particle_number*Popfuncs[0]
+        # 他の準位からのカスケードによる流入が先に加算されていることがあるので，代入ではなく加算する
+        dfdt[df] += Cross_Sections_dict[nowOrbit]*v*Particle_number*Popfuncs[0]
         if nowOrbit in A_coefficients_dict:
             dfdt[df] -= sum(A_coefficients_dict[nowOrbit].values())*Popfuncs[df]
             for finalstate, AC in A_coefficients_dict[nowOrbit].items():
@@ -170,13 +171,13 @@ class PopGraph():
         isPlotBeforeCollision = input('衝突前のイオンのポピュレーションをプロットしますか?(y/n)\n> ')
 
         if isPlotBeforeCollision == 'Y' or isPlotBeforeCollision == 'y':
-            self.popfig.plot(xaxisarray[::100], populations[::100, 0], label=orbits[0])
+            self.popfig.plot(xaxisarray[::100], populations[::100, 0], label=self.orbits[0])
 
         for i in np.arange(1, len(populations[0])):
             self.popfig.plot(xaxisarray[::100], populations[::100, i], label='{0}'.format(self.orbits[i]), linestyle='-')
 
     def selectionPlot(self, xaxis, populations):
-        for i, orbit in enumerate(self.orbits[:len(populations[1:])]):
+        for i, orbit in enumerate(self.orbits[:populations.shape[1]]):
             print('[{0}] {1}'.format(i, orbit))
         # 複数選択された準位の曲線を同時にプロットできるようにしている．whitespace区切りで準位の入力ができる
         orbitnumbers = list(map(int, input().split()))
@@ -189,10 +190,7 @@ class PopGraph():
         else:
             self.popfig.set_xlabel('Position[cm]', fontsize=25)
 
-        for tick in self.popfig.xaxis.get_major_ticks():
-            tick.label.set_fontsize(20)
-        for tick in self.popfig.yaxis.get_major_ticks():
-            tick.label.set_fontsize(20)
+        self.popfig.tick_params(axis='both', labelsize=20)
         self.popfig.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
         self.popfig.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
         self.popfig.xaxis.offsetText.set_fontsize(15)
@@ -202,7 +200,7 @@ class PopGraph():
         self.popfig.xaxis.set_major_formatter(scale_format)
 
         isshowlegend = input('凡例(legend)を表示しますか?[y|n] > ')
-        if isshowlegend == 'y' or 'Y':
+        if isshowlegend == 'y' or isshowlegend == 'Y':
             self.popfig.legend(loc='best')
         plt.tight_layout()
 

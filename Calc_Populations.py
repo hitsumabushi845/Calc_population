@@ -6,7 +6,7 @@ import json
 from scipy.integrate import ode
 from scipy.linalg import block_diag
 from tqdm import tqdm
-from Calc_Populations_funcs_ECCSjson import *
+from Calc_Populations_funcs import *
 import matplotlib.pyplot as plt
 import platform
 
@@ -39,7 +39,7 @@ def main():
 
     # ファイル名から衝突系(X^q+ - Y)の文字列を取り出す
     Collision_system = ECCSFilePath.split('/')
-    Collision_system = Collision_system[-1].rstrip('.json')
+    Collision_system = os.path.splitext(Collision_system[-1])[0]
     target_particle = Collision_system.split('+')[-1]
 
     # header文字列，保存する際のファイル名を設定
@@ -171,6 +171,7 @@ def main():
     print(default_output_filename)
 
     # データファイルを保存
+    os.makedirs('datafiles', exist_ok=True)
     np.savetxt('datafiles/outputdata{0}.csv'.format(default_output_filename), outputarray, delimiter=',', header=headerstr)
 
 if __name__ == '__main__':
