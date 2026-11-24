@@ -1,2 +1,4 @@
 /ECCS_json/
 .DS_Store
+tmp/
+datafiles/
