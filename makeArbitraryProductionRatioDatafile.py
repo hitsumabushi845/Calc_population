@@ -1,7 +1,7 @@
 import json
 import sys
 import numpy as np
-from Calc_Populations_funcs_ECCSjson import readorbitsfile_forCalcAssignmentRatio
+from Calc_Populations_funcs import readorbitsfile
 
 def setSingletTripletRatio():
     try:
@@ -26,7 +26,7 @@ def calculateCrossSectionAssignmentRatio(singletRatio=1, tripletRatio=3, Js=None
 
 def makeArbitraryProductionRatioDatafile(inProgram=False):
 
-    nlJ_parameters_dict, nl_to_nlJ_map_dict, ordered_nl_list, ordered_nlJ_list = readorbitsfile_forCalcAssignmentRatio('He')
+    nlJ_parameters_dict, nl_to_nlJ_map_dict, ordered_nl_list, ordered_nlJ_list = readorbitsfile('He')
 
     print('Choose the procedure of making Production Ratio datafile:')
     print('1. Apply equal singlet-triplet production ratio to all nl states.')

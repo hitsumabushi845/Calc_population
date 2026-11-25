@@ -1,12 +1,13 @@
 import numpy as np
 import os
 import sys
+import math
 import datetime
 import json
 from scipy.integrate import ode
 from scipy.linalg import block_diag
 from tqdm import tqdm
-from Calc_Populations_funcs_ECCSjson import *
+from Calc_Populations_funcs import *
 import matplotlib.pyplot as plt
 import platform
 
@@ -39,7 +40,7 @@ def main():
 
     # ファイル名から衝突系(X^q+ - Y)の文字列を取り出す
     Collision_system = ECCSFilePath.split('/')
-    Collision_system = Collision_system[-1].rstrip('.json')
+    Collision_system = os.path.splitext(Collision_system[-1])[0]
     target_particle = Collision_system.split('+')[-1]
 
     # header文字列，保存する際のファイル名を設定
@@ -124,29 +125,34 @@ def main():
         print('ACdict = {}'.format(ACdict))
         print('orbitlist = {}'.format(orbitlist))
 
-    # 求解アルゴリズム，初期値の指定．硬い微分方程式なのでBDFを使用
-    r = ode(rate_eqs).set_integrator('vode', method='bdf')
-    r.set_initial_value(f0, t0).set_f_params(Collision_Speed, Total_Cross_Section, particle_number, Cross_Sections_dict, ACdict, orbitlist)
+    if '--bdf' not in sys.argv:
+        # 既定の解法: 行列指数による求解．
+        # 係数が時間によらない線形の方程式なので，数値積分をせずに厳密解を求められる
+        gains, losses = create_rate_matrix(len(f0), Collision_Speed, Total_Cross_Section, particle_number, Cross_Sections_dict, ACdict, orbitlist)
+        t1, res = solve_rate_eqs_expm(f0, dt, int(math.ceil(tend/dt)), gains, losses)
+    else:
+        # --bdf を付けると，従来の数値積分で解く(結果の比較用)
+        # 求解アルゴリズム，初期値の指定．硬い微分方程式なのでBDFを使用
+        r = ode(rate_eqs).set_integrator('vode', method='bdf')
+        r.set_initial_value(f0, t0).set_f_params(Collision_Speed, Total_Cross_Section, particle_number, Cross_Sections_dict, ACdict, orbitlist)
 
+        # レート方程式を解いていく
+        t1 = []
+        res = []
 
-    # レート方程式を解いていく
-    t1 = []
-    res = []
+        # progress barの設定
+        pbar = tqdm(total=10000)
+        pbar.set_description('Processing {0} calculation'.format(Collision_system))
+        percent_t = tend/10000.0
 
-    # progress barの設定 
-    pbar = tqdm(total=10000)
-    pbar.set_description('Processing {0} calculation'.format(Collision_system))
-    percent_t = tend/10000.0
-    
-    
-    while r.successful() and r.t < tend:
-        if r.t > percent_t:
-            pbar.update(1)
-            percent_t = percent_t + tend/10000.0
-        tmp = r.integrate(r.t+dt)
-        t1.append(r.t)
-        res.append(tmp)
-    pbar.close()
+        while r.successful() and r.t < tend:
+            if r.t > percent_t:
+                pbar.update(1)
+                percent_t = percent_t + tend/10000.0
+            tmp = r.integrate(r.t+dt)
+            t1.append(r.t)
+            res.append(tmp)
+        pbar.close()
 
     # macOSで実行している場合は計算が終了したときにNotification Centerから通知
     if platform.system() == 'Darwin':
@@ -171,6 +177,7 @@ def main():
     print(default_output_filename)
 
     # データファイルを保存
+    os.makedirs('datafiles', exist_ok=True)
     np.savetxt('datafiles/outputdata{0}.csv'.format(default_output_filename), outputarray, delimiter=',', header=headerstr)
 
 if __name__ == '__main__':
