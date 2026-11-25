@@ -14,13 +14,18 @@
 | H-like イオン (C<sup>5+</sup>，N<sup>6+</sup>，O<sup>7+</sup>) | He-like |
 | He-like イオン (O<sup>6+</sup>) | Li-like |
 
-ここに上がっているファイル群だけでは正常に計算できません．電子捕獲断面積のデータは Web 上にアップロードすることが推奨されないデータセット (personal なデータ) なので，このリポジトリに含めていません．計算するには，断面積のデータを自分で用意します (「1. 断面積データの準備」)．
+> [!IMPORTANT]
+> ここに上がっているファイル群だけでは正常に計算できません．電子捕獲断面積のデータは Web 上にアップロードすることが推奨されないデータセット (personal なデータ) なので，このリポジトリに含めていません．計算するには，断面積のデータを自分で用意します ([1. 断面積データの準備](#1-断面積データの準備))．
 
 ## セットアップ
 
-Python 3 がインストール済みであることを前提にします．macOS や Linux では，リポジトリのルートで次のコマンドを実行すると，venv の仮想環境 `.venv/` が作られ，`requirements.txt` のパッケージがその中にインストールされます．
+Python 3 がインストール済みであることを前提にします．
 
-```
+### macOS，Linux
+
+macOS や Linux では，リポジトリのルートで次のコマンドを実行すると，venv の仮想環境 `.venv/` が作られ，`requirements.txt` のパッケージがその中にインストールされます．
+
+```sh
 ./setup.sh
 ```
 
@@ -34,64 +39,84 @@ Python 3 がインストール済みであることを前提にします．macOS
 
 使う Python を変えるときは，環境変数 `PYTHON` で指定します．
 
-```
+```sh
 PYTHON=python3.12 ./setup.sh
 ```
 
 プログラムを実行する前に，シェルを開くたびに仮想環境を有効にします．
 
-```
+```sh
 source .venv/bin/activate        # bash，zsh
 source .venv/bin/activate.fish   # fish
 ```
 
 `.venv/` は `.gitignore` に入れてあります．`.venv/` があるときに `./setup.sh` をもう一度実行すると，仮想環境は作り直さずにパッケージのインストールだけを行います．
 
+<details>
+<summary><code>setup.sh</code> を使わないとき</summary>
+
 `setup.sh` を使わないときは，次のコマンドで同じ環境を作れます．
 
-```
+```sh
 python3 -m venv .venv
 .venv/bin/python -m pip install --upgrade pip
 .venv/bin/python -m pip install -r requirements.txt
 ```
 
+</details>
+
+### Windows
+
+> [!WARNING]
+> `setup.ps1` と，Windows でのプログラムの動作は確認していません．
+
 Windows では `setup.sh` の代わりに `setup.ps1` を使います．PowerShell でリポジトリのルートに移動し，次のコマンドを実行します．
 
-```
+```powershell
 powershell -ExecutionPolicy Bypass -File setup.ps1
 ```
 
 使う Python を変えるときは，`-Python` か環境変数 `PYTHON` で指定します．
 
-```
+```powershell
 powershell -ExecutionPolicy Bypass -File setup.ps1 -Python py
 ```
 
 仮想環境は次のコマンドで有効にします．
 
-```
+```powershell
 .venv\Scripts\Activate.ps1    # PowerShell
 .venv\Scripts\activate.bat    # コマンドプロンプト
 ```
 
-PowerShell がスクリプトの実行を許可しない設定になっていると，`Activate.ps1` は実行できません．そのときは `Set-ExecutionPolicy -Scope Process RemoteSigned` を実行してから有効にするか，コマンドプロンプトを使います．
+> [!NOTE]
+> PowerShell がスクリプトの実行を許可しない設定になっていると，`Activate.ps1` は実行できません．そのときは `Set-ExecutionPolicy -Scope Process RemoteSigned` を実行してから有効にするか，コマンドプロンプトを使います．
 
-`setup.ps1` と，Windows でのプログラムの動作は確認していません．
+### 動作を確認した環境
 
-動作を確認した環境は次の 2 つです．
-
-- macOS，Python 3.12.13 と 3.15.2，numpy 2.5.5，scipy 1.18.1，matplotlib 3.11.2，tqdm 4.70.1，pandas 3.1.1 (`setup.sh` は Python 3.15.2 で確認)
-- macOS Sierra v10.12.5，Python 3.5.1 (Anaconda 4.0.0)，matplotlib の backend は Qt5Agg (開発当初の環境)
+| OS | Python | パッケージ | 備考 |
+|---|---|---|---|
+| macOS | 3.12.13 と 3.15.2 | numpy 2.5.5，scipy 1.18.1，matplotlib 3.11.2，tqdm 4.70.1，pandas 3.1.1 | `setup.sh` は Python 3.15.2 で確認 |
+| macOS Sierra v10.12.5 | 3.5.1 (Anaconda 4.0.0) | matplotlib の backend は Qt5Agg | 開発当初の環境 |
 
 ## 使い方
 
 どのプログラムもリポジトリのルートで実行します．実行すると画面に質問が出るので，番号や値を入力して進めます．
 
+```mermaid
+flowchart TD
+    A["tmp/ の断面積データ (テキスト)"] -->|convertECCStoJSON.py| B["ECCS_json/ の断面積データ (JSON)"]
+    B -->|Calc_Populations.py| C["datafiles/ の解データ (CSV)"]
+    C -->|plotfromdatafile.py| D["占有数のグラフ"]
+    C -->|plot_spectrum_from_population.py| E["発光スペクトル"]
+    F["spectrumdatafiles/ のスペクトルデータ (CSV)"] -->|gaussian_convolution.py| G["ガウス関数で重ね合わせたスペクトル"]
+```
+
 ### 1. 断面積データの準備
 
 `Calc_Populations.py` は `ECCS_json/` に置いた JSON から nl 別の電子捕獲断面積を読み込みます．テキスト形式の表を `tmp/` に置いて次のコマンドを実行すると，`ECCS_json/` に JSON が出力されます．
 
-```
+```sh
 python convertECCStoJSON.py
 ```
 
@@ -99,7 +124,7 @@ python convertECCStoJSON.py
 
 テキストの表は次の形で書きます．断面積の単位は 10<sup>-16</sup> cm<sup>2</sup> です．
 
-```
+```text
 O(8+)+He
  E (keV/u)   total   1s   2s   2p   3s   3p   3d   ...
  (衝突エネルギー) (全断面積) (1s の断面積) (2s の断面積) ...
@@ -115,14 +140,13 @@ O(8+)+He
 - 途中で切れている行を含む表は，全ての行に共通する殻までで切り詰めます．`total` の列に届かずに切れた行は省略します．
 - データにない低い準位は 0.0 で補完します．`Calc_Populations.py` が準位リストの先頭から連続して断面積が入っていることを前提にしているためです．
 
-出力される JSON は次の形です．JSON を直接書いて `ECCS_json/` に置くこともできます．
+出力される JSON は次の形です (`ECCS_json/Hlike/O8+He.json` の例．nl は 2p までで省略しています)．JSON を直接書いて `ECCS_json/` に置くこともできます．
 
-```
-ECCS_json/Hlike/O8+He.json
+```json
 {
   "iontype": "H",
-  "1.0": {"1s": 0.0, "2s": 0.0, "2p": 0.0, ...},
-  "1.5": {...}
+  "1.0": {"1s": 0.0, "2s": 0.0, "2p": 0.0},
+  "1.5": {"1s": 0.0, "2s": 0.0, "2p": 0.0}
 }
 ```
 
@@ -133,7 +157,7 @@ ECCS_json/Hlike/O8+He.json
 
 ### 2. 占有数の計算
 
-```
+```sh
 python Calc_Populations.py
 ```
 
@@ -158,11 +182,14 @@ python Calc_Populations.py
 
 - 1 行目は `#` で始まるコメントで，計算日時，衝突系，衝突エネルギー，粒子数が入ります．
 - 1 列目は時刻 (s)，2 列目は衝突前のイオンの占有数です．3 列目以降は各準位の占有数で，`AtomicOrbitDatasets/orbits_{iontype}like.txt` の順に並びます．
-- 行は 10<sup>-12</sup> s ごとで，衝突セルを通り抜ける時刻まで続きます．ファイルは数十 MB から数百 MB になります．`datafiles/` も `.gitignore` に入れてあります．
+- 行は 10<sup>-12</sup> s ごとで，衝突セルを通り抜ける時刻まで続きます．
+
+> [!NOTE]
+> ファイルは数十 MB から数百 MB になります．`datafiles/` も `.gitignore` に入れてあります．
 
 ### 3. 占有数のプロット
 
-```
+```sh
 python plotfromdatafile.py
 ```
 
@@ -170,13 +197,13 @@ python plotfromdatafile.py
 
 ### 4. 発光スペクトルのプロット
 
-```
+```sh
 python plot_spectrum_from_population.py
 ```
 
 データファイルと時刻を選ぶと，その時刻の占有数から発光スペクトルをプロットします．横軸はエネルギー (eV) か波長 (nm) を選べます．各遷移の強度は上の準位の占有数に A 係数と固定の時間幅 4.55×10<sup>-9</sup> s を掛けた値です．
 
-```
+```sh
 python gaussian_convolution.py
 ```
 
@@ -193,19 +220,23 @@ python gaussian_convolution.py
 
 衝突前のイオンに関する方程式
 
-$$\frac{\mathrm{d}[\mathrm{X}^{q+}]}{\mathrm{d}t} = -\sigma_{\mathrm{total}} \cdot v\,[\mathrm{X}^{q+}][\mathrm{Y}]$$
+```math
+\frac{\mathrm{d}[\mathrm{X}^{q+}]}{\mathrm{d}t} = -\sigma_{\mathrm{total}} \cdot v\,[\mathrm{X}^{q+}][\mathrm{Y}]
+```
 
 衝突後のイオンに関する方程式
 
-$$\frac{\mathrm{d}[\mathrm{X}^{(q-1)+}(\mathcal{S})]}{\mathrm{d}t} = \sigma_{\mathcal{S}} \cdot v\,[\mathrm{X}^{q+}][\mathrm{Y}] + \sum_{\mathcal{S}'} A_{\mathcal{S}',\mathcal{S}}\,[\mathrm{X}^{(q-1)+}(\mathcal{S}')] - \left\lbrace \sum_{\mathcal{S}''} A_{\mathcal{S},\mathcal{S}''} \right\rbrace [\mathrm{X}^{(q-1)+}(\mathcal{S})]$$
+```math
+\frac{\mathrm{d}[\mathrm{X}^{(q-1)+}(\mathcal{S})]}{\mathrm{d}t} = \sigma_{\mathcal{S}} \cdot v\,[\mathrm{X}^{q+}][\mathrm{Y}] + \sum_{\mathcal{S}'} A_{\mathcal{S}',\mathcal{S}}\,[\mathrm{X}^{(q-1)+}(\mathcal{S}')] - \left\lbrace \sum_{\mathcal{S}''} A_{\mathcal{S},\mathcal{S}''} \right\rbrace [\mathrm{X}^{(q-1)+}(\mathcal{S})]
+```
 
-からなる連立微分方程式を解きます．$\sigma_{\mathcal{S}}$ は準位 $\mathcal{S}$ への電子捕獲断面積，$\sigma_{\mathrm{total}}$ はその和，$v$ は衝突速度，$[\mathrm{Y}]$ は標的の粒子数，$A_{\mathcal{S}',\mathcal{S}}$ は準位 $\mathcal{S}'$ から $\mathcal{S}$ への遷移の A 係数です．
+からなる連立微分方程式を解きます．$`\sigma_{\mathcal{S}}`$ は準位 $`\mathcal{S}`$ への電子捕獲断面積，$`\sigma_{\mathrm{total}}`$ はその和，$`v`$ は衝突速度，$`[\mathrm{Y}]`$ は標的の粒子数，$`A_{\mathcal{S}',\mathcal{S}}`$ は準位 $`\mathcal{S}'`$ から $`\mathcal{S}`$ への遷移の A 係数です．
 
 計算では次のように扱います．
 
 - 扱う過程は一電子捕獲と放射遷移です．
 - 初期条件は衝突前のイオンの占有数が 1，衝突後のイオンの占有数が 0 です．
-- 衝突速度は核子あたりの運動エネルギー E (keV/u) から $v = \sqrt{2E/m}$ で求めます．
+- 衝突速度は核子あたりの運動エネルギー E (keV/u) から $`v = \sqrt{2E/m}`$ で求めます．
 - 計算する時間は長さ 5 cm の衝突セルを通り抜ける時刻までです．標的の粒子数と衝突速度はその間一定とします．
 - nl 別の断面積は `AtomicOrbitDatasets/{iontype}orbits.json` の `total_angularmomentum_multiplicity` の比で微細構造準位に割り振ります．
 
@@ -213,11 +244,13 @@ $$\frac{\mathrm{d}[\mathrm{X}^{(q-1)+}(\mathcal{S})]}{\mathrm{d}t} = \sigma_{\ma
 
 レート方程式は係数が時間によらない線形の連立方程式なので，係数行列を M とすると
 
-$$f(t + \Delta t) = \exp(M \Delta t)\, f(t)$$
+```math
+f(t + \Delta t) = \exp(M \Delta t)\, f(t)
+```
 
 が厳密に成り立ちます．`Calc_Populations.py` は数値積分をせずにこの関係で解きます．丸め誤差を抑えるために，次の 2 つを行っています．
 
-- $\exp(M \Delta t)$ ではなく $Q = \exp(M \Delta t) - I$ を直接計算し，$f + Qf$ の形で進めます．ゆっくり変化する準位の小さな変化量が，1 に近い数に埋もれて丸められるのを防ぎます．
+- $`\exp(M \Delta t)`$ ではなく $`Q = \exp(M \Delta t) - I`$ を直接計算し，$`f + Qf`$ の形で進めます．ゆっくり変化する準位の小さな変化量が，1 に近い数に埋もれて丸められるのを防ぎます．
 - 足し込みに Kahan の補償付き加算を使います．
 
 `--bdf` を付けると，`scipy.integrate.ode` の BDF 法 (既定の許容誤差) で解きます．
