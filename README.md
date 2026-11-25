@@ -18,7 +18,7 @@
 
 ## セットアップ
 
-Python 3 がインストール済みであることを前提にします．リポジトリのルートで次のコマンドを実行すると，venv の仮想環境 `.venv/` が作られ，`requirements.txt` のパッケージがその中にインストールされます．
+Python 3 がインストール済みであることを前提にします．macOS や Linux では，リポジトリのルートで次のコマンドを実行すると，venv の仮想環境 `.venv/` が作られ，`requirements.txt` のパッケージがその中にインストールされます．
 
 ```
 ./setup.sh
@@ -54,6 +54,29 @@ python3 -m venv .venv
 .venv/bin/python -m pip install --upgrade pip
 .venv/bin/python -m pip install -r requirements.txt
 ```
+
+Windows では `setup.sh` の代わりに `setup.ps1` を使います．PowerShell でリポジトリのルートに移動し，次のコマンドを実行します．
+
+```
+powershell -ExecutionPolicy Bypass -File setup.ps1
+```
+
+使う Python を変えるときは，`-Python` か環境変数 `PYTHON` で指定します．
+
+```
+powershell -ExecutionPolicy Bypass -File setup.ps1 -Python py
+```
+
+仮想環境は次のコマンドで有効にします．
+
+```
+.venv\Scripts\Activate.ps1    # PowerShell
+.venv\Scripts\activate.bat    # コマンドプロンプト
+```
+
+PowerShell がスクリプトの実行を許可しない設定になっていると，`Activate.ps1` は実行できません．そのときは `Set-ExecutionPolicy -Scope Process RemoteSigned` を実行してから有効にするか，コマンドプロンプトを使います．
+
+`setup.ps1` と，Windows でのプログラムの動作は確認していません．
 
 動作を確認した環境は次の 2 つです．
 
