@@ -107,11 +107,12 @@ def make2Ddict(names):
 
 def convert_energy(col_Energy_kVu):
     '''
-        引数に与えられた衝突エネルギー[kV/u]を
+        引数に与えられた衝突エネルギー[keV/u](核子あたりの運動エネルギー)を
         衝突速度[cm/s]に変換する関数．
+        E = (1/2)mv^2 より v = sqrt(2E/m)．9.64854e7 は e/u [C/kg]．
     '''
 
-    col_Energy_cms = math.sqrt(col_Energy_kVu*10**10*9.64854)*10**2
+    col_Energy_cms = math.sqrt(2*col_Energy_kVu*10**10*9.64854)*10**2
 
     return col_Energy_cms
 
