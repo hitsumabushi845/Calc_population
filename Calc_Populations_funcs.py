@@ -27,6 +27,95 @@ def rate_eqs(t, Popfuncs, v, Total_Cross_Section, Particle_number, Cross_Section
     return dfdt
 
 
+def create_rate_matrix(numberOfStates, v, Total_Cross_Section, Particle_number, Cross_Sections_dict, A_coefficients_dict, orbitlist):
+    '''
+        レート方程式 df/dt = M f の係数行列を，流入と流出に分けて返す．
+            gains[i][j]: 準位 j から準位 i への流入レート(全て 0 以上，対角は 0)
+            losses[j]  : 準位 j からの流出レート(全て 0 以上)
+        M = gains - diag(losses) であり，rate_eqs() と同じ方程式を表す．
+        index 0 が衝突前のイオン，index i (i >= 1) が orbitlist[i-1] に対応する．
+    '''
+
+    index = {orbit: i + 1 for i, orbit in enumerate(orbitlist[:numberOfStates - 1])}
+    gains = np.zeros((numberOfStates, numberOfStates))
+    losses = np.zeros(numberOfStates)
+
+    losses[0] = Total_Cross_Section * v * Particle_number
+    for df in range(1, numberOfStates):
+        nowOrbit = orbitlist[df-1]
+        gains[df][0] = Cross_Sections_dict[nowOrbit] * v * Particle_number
+        if nowOrbit in A_coefficients_dict:
+            losses[df] = sum(A_coefficients_dict[nowOrbit].values())
+            for finalstate, AC in A_coefficients_dict[nowOrbit].items():
+                gains[index[finalstate]][df] += AC
+
+    return gains, losses
+
+
+def expm1_matrix(M, dt):
+    '''
+        Q = exp(M dt) - I を，単位行列を足さずに直接計算する．
+
+        ゆっくり変化する準位(衝突前のイオン，基底状態，準安定状態)では exp(M dt) の対角がほぼ 1 になる．
+        1 に近い数として持つと 1 ステップの変化量の下の桁が丸められ，その誤差が毎ステップ同じ向きに積もる．
+        変化量 Q だけを持てば，小さい変化量もその大きさに見合った桁数で表せる．
+
+        h = dt / 2^s と小さく取ってテイラー級数 Q(h) = M h + (M h)^2/2! + ... を求め，
+        exp(2x) - 1 = 2(exp(x) - 1) + (exp(x) - 1)^2 を s 回使って Q(dt) に戻す．
+    '''
+
+    numberOfStates = len(M)
+    norm = np.abs(M).sum(axis=0).max() * dt
+    if norm == 0.0:
+        return np.zeros((numberOfStates, numberOfStates))
+
+    # ||M h|| <= 1 となるように刻みを 2^s 分の 1 にする
+    doublings = max(0, int(math.ceil(math.log2(norm))))
+    Mh = M * (dt / 2**doublings)
+
+    # 新しい項が全ての要素で丸め誤差以下になったら打ち切る
+    term = Mh.copy()
+    Q = Mh.copy()
+    for k in range(2, 200):
+        term = term @ Mh / k
+        Q += term
+        if np.all(np.abs(term) <= np.finfo(float).eps * np.abs(Q)):
+            break
+    else:
+        raise RuntimeError('exp(M h) - I のテイラー級数が収束しませんでした．')
+
+    for i in range(doublings):
+        Q = 2.0 * Q + Q @ Q
+
+    return Q
+
+
+def solve_rate_eqs_expm(f0, dt, numberOfSteps, gains, losses):
+    '''
+        レート方程式を行列指数で解く．
+        係数が時間によらない線形の方程式なので，f(t + dt) = exp(M dt) f(t) が厳密に成り立つ．
+        時刻 dt, 2dt, ..., numberOfSteps*dt の解を返す．
+
+        丸め誤差を抑えるため，f(t + dt) = f(t) + Q f(t) (Q = exp(M dt) - I) の形で進め，
+        足し込みには Kahan の補償付き加算を使う(加算で丸められた分を次のステップに繰り越す)．
+    '''
+
+    Q = expm1_matrix(gains - np.diag(losses), dt)
+
+    f = np.array(f0, dtype=float)
+    carry = np.zeros(len(f))
+    times = dt * np.arange(1, numberOfSteps + 1)
+    solution = np.empty((numberOfSteps, len(f)))
+    for step in range(numberOfSteps):
+        increment = Q @ f - carry
+        updated = f + increment
+        carry = (updated - f) - increment
+        f = updated
+        solution[step] = f
+
+    return times, solution
+
+
 def readorbitsfile(iontype):
     '''
         iontypenumberで指定されたイオン種に対応するファイルを読み込む．
