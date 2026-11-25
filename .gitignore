@@ -2,3 +2,5 @@
 .DS_Store
 tmp/
 datafiles/
+.venv/
+__pycache__/
